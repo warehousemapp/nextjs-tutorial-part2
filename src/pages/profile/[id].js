@@ -21,7 +21,7 @@ function Post({ dados }) {
 			</Link>
 			<div>
 				{dados.map((post) => (
-					<div>
+					<div key={post.ID}>
 						<h3>{post.nome}</h3>
 						<img src={post.imagem} width="50" />
 					</div>

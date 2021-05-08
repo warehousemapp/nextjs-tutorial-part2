@@ -9,7 +9,7 @@ async function fetcher(url) {
   const res = await fetch(url);
   return res.json();
 }
-const url = 'https://back-end-warehouseapp.herokuapp.com';
+const url = 'https://back-end-warehouseapp.herokuapp.com/?page=1&per_page=100';
 export default function Home(props) {
 
   const [busca, setBusca] = useState('');
@@ -50,7 +50,7 @@ export default function Home(props) {
 
 //export const getSeverSideProps = async () => {
 export const getStaticProps = async () => {
-  const dados = await fetcher(`https://back-end-warehouseapp.herokuapp.com`);
+  const dados = await fetcher(`https://back-end-warehouseapp.herokuapp.com/?page=1&per_page=100`);
   //const {dados} = await res.json();
 
   return {

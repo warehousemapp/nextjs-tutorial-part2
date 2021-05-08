@@ -1,65 +1,74 @@
-import Head from 'next/head';
-import styles from '../../styles/Home.module.css';
+import { useState } from 'react'
+import useSWR from 'swr';
+//import axios from 'axios';
+import Link from 'next/link';
+//import Image from 'next/image'
+//import styles from '../../styles/Home.module.css';
 
-export default function Home() {
+async function fetcher(url) {
+  const res = await fetch(url);
+  return res.json();
+}
+
+export default function Home(props) {
+
+  const [busca, setBusca] = useState('');
+
+  const lowerBusca = busca.toLowerCase()
+  const { data, error } = useSWR(`https://back-end-warehouseapp.herokuapp.com/teste/?page=1&per_page=10&search=${lowerBusca}`, fetcher, { initialData: props.dados });
+  if (!data) return <h1>I am loading...</h1>;
+  if (error) return <h1>there is an error</h1>;
+  const dados = data//.filter((item) => item.nome.toLowerCase().includes(lowerBusca));
+  //const {dados}  = data;
+  //console.log(data)
   return (
-    <div className={styles.container}>
-      <Head>
-        <title>Create Next App</title>
-        <link rel='icon' href='/favicon.ico' />
-      </Head>
+    <>
+      <div>
+        <h1>Busca</h1>
+        <input
+          type="text"
+          value={busca}
+          onChange={(ev) => setBusca(ev.target.value)}
+        />
+      </div>
+      <div>
+        {dados.map((arg) => (
+          <div key={arg.ID}>
+            <h2>
+              {arg.ID}-{arg.nome}-{arg.rowNumber}
+            </h2>
+            <Link key={arg.ID} href='/profile/[id]' as={`/profile/${arg.ID}`}>
+              <a>{arg.nome}</a>
+            </Link>
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href='https://nextjs.org'>Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href='https://nextjs.org/docs' className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href='https://nextjs.org/learn' className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href='https://github.com/vercel/next.js/tree/master/examples'
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href='https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app'
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href='https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app'
-          target='_blank'
-          rel='noopener noreferrer'
-        >
-          Powered by{' '}
-          <img src='/vercel.svg' alt='Vercel Logo' className={styles.logo} />
-        </a>
-      </footer>
-    </div>
+          </div>
+        ))}
+      </div>
+    </>
   );
 }
+
+//export const getSeverSideProps = async () => {
+  export const getStaticProps = async () => {
+  const dados = await fetcher(`https://back-end-warehouseapp.herokuapp.com/teste/?page=1&per_page=10`);
+  //const {dados} = await res.json();
+
+  return {
+    props: {
+      dados
+    },
+    revalidate: 20,
+  };
+};
+
+/*export const getStaticProps = async () => {
+  const response = await axios.get(`https://back-end-warehouseapp.herokuapp.com`);
+  //const {dados} = await res.json();
+
+  return {
+    props: {
+      dados: response.data,
+    },
+    revalidate: 20,
+  };
+};*/

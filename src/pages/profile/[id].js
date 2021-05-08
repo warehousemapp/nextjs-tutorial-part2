@@ -14,7 +14,7 @@ function Post({ dados }) {
 
 	return (
 		<div>
-			<Link href="/users">
+			<Link href="/">
 				<a>
 					<h1>Home</h1>
 				</a>
@@ -33,14 +33,19 @@ function Post({ dados }) {
 
 // This function gets called at build time
 export async function getStaticPaths() {
-	return {
-		// Only `/posts/1` and `/posts/2` are generated at build time
-		paths: [ { params: { id: '1' } }, { params: { id: '2' } } ],
-		// Enable statically generating additional pages
-		// For example: `/posts/3`
-		fallback: true
-	};
-}
+	// Call an external API endpoint to get posts
+	const res = await fetch('https://back-end-warehouseapp.herokuapp.com')
+	const posts = await res.json()
+  
+	// Get the paths we want to pre-render based on posts
+	const paths = posts.map((post) => ({
+	  params: { id: post.ID },
+	}))
+  
+	// We'll pre-render only these paths at build time.
+	// { fallback: false } means other routes should 404.
+	return { paths, fallback: true }
+  }
 
 export const getStaticProps = async ({ params }) => {
   const response = await axios.get(`https://back-end-warehouseapp.herokuapp.com/user/${params.id}`);

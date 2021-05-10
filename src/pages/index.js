@@ -31,7 +31,7 @@ export default function Home() {
 
   if (!data) return <h1>I am loading...</h1>;
   if (error) return <h1>there is an error</h1>;
-  const dados = [...data];
+  const dados = data;
   const totalp = data.length;
   const totalPages = Math.ceil(totalp / per_page);
   const arrayPages = [];

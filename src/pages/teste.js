@@ -23,6 +23,7 @@ export default function Home(props) {
     fetcher,
     {
       initialData: props.dados,
+      refreshInterval:500
 /*       revalidateOnMount: true,
       revalidateOnFocus: true,
       shouldRetryOnError: true,

@@ -13,7 +13,7 @@ function Post({ post }) {
   return (
     <>
       <div>
-        <Link href="/">
+        <Link href="/teste">
           <a>
             <h1>Home</h1>
           </a>

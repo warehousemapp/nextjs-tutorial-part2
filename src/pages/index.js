@@ -11,7 +11,7 @@ async function fetcher(url) {
   return res.json();
 }
 
-export default function Home(props) {
+export default function Home() {
   const [busca, setBusca] = useState('');
   const [per_page, setPer_page] = useState(100);
   const [page, setPage] = useState(1);
@@ -21,7 +21,6 @@ export default function Home(props) {
     `https://back-end-warehouseapp.herokuapp.com/teste/?per_page=${per_page}&page=${page}&search=${lowerBusca}`,
     fetcher,
     {
-      initialData: props.dados,
       revalidateOnMount: true,
       revalidateOnFocus: true,
       shouldRetryOnError: true,
@@ -116,7 +115,7 @@ export default function Home(props) {
   );
 }
 
-export const getSeverSideProps = async () => {
+/* export const getSeverSideProps = async () => {
 //export const getStaticProps = async () => {
   const dados = await fetcher(
     `https://back-end-warehouseapp.herokuapp.com/teste`
@@ -130,7 +129,7 @@ export const getSeverSideProps = async () => {
     revalidate: 1
   };
 };
-
+ */
 /* export const getStaticProps = async () => {
   const response = await axios.get(`https://back-end-warehouseapp.herokuapp.com/teste/?per_page=100&page=1&search=`);
   //const {dados} = await res.json();

@@ -116,8 +116,8 @@ export default function Home(props) {
   );
 }
 
-//export const getSeverSideProps = async () => {
-export const getStaticProps = async () => {
+export const getSeverSideProps = async () => {
+//export const getStaticProps = async () => {
   const dados = await fetcher(
     `https://back-end-warehouseapp.herokuapp.com/teste`
   );

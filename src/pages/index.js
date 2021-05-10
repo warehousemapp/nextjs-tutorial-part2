@@ -111,7 +111,7 @@ export default function Home(props) {
               </div>
             ),
             mutate(
-              `https://back-end-warehouseapp.herokuapp.com/teste/?per_page=${per_page}&page=${page}&search=${lowerBusca}`
+              `https://back-end-warehouseapp.herokuapp.com/teste`
             )
           )}
       </div>

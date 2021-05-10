@@ -109,9 +109,6 @@ export default function Home(props) {
                   <a>{arg.slug}</a>
                 </Link>
               </div>
-            ),
-            mutate(
-              `https://back-end-warehouseapp.herokuapp.com/teste`
             )
           )}
       </div>

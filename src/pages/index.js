@@ -68,7 +68,7 @@ export default function Home(props) {
             <option value="10">10</option>
             <option value="15">15</option>
             <option value="100">100</option>
-            <option value="100">810</option>
+            <option value="810">810</option>
           </select>
         </div>
         {totalp}
@@ -100,7 +100,7 @@ export default function Home(props) {
                 <h2>
                   {arg.ID}-{arg.nome}-{arg.rowNumber - 1}
                 </h2>
-                <img src={arg.imagem} width="50" />
+                
                 <Link
                   key={arg.ID}
                   href="/profile/[id]"

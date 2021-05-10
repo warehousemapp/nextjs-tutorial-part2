@@ -1,16 +1,10 @@
-<<<<<<< HEAD
-import { useState } from 'react'
-import useSWR from 'swr';
+import { useState } from 'react';
+import useSWR, { mutate } from 'swr';
 //import axios from 'axios';
 import Link from 'next/link';
-=======
-import { useState } from "react";
-import useSWR from "swr";
-//import axios from 'axios';
-import Link from "next/link";
->>>>>>> 9819151fa9bcecd4bd92bfb8fe78fba6b7dca00f
 //import Image from 'next/image'
 //import styles from '../../styles/Home.module.css';
+import SearchInput from './SearchInput';
 
 async function fetcher(url) {
   const res = await fetch(url);
@@ -18,94 +12,49 @@ async function fetcher(url) {
 }
 
 export default function Home(props) {
-<<<<<<< HEAD
-
   const [busca, setBusca] = useState('');
-
-  const lowerBusca = busca.toLowerCase()
-  const { data, error } = useSWR(`https://back-end-warehouseapp.herokuapp.com/teste/?page=1&per_page=10&search=${lowerBusca}`, fetcher, { initialData: props.dados });
-  if (!data) return <h1>I am loading...</h1>;
-  if (error) return <h1>there is an error</h1>;
-  const dados = data//.filter((item) => item.nome.toLowerCase().includes(lowerBusca));
-  //const {dados}  = data;
-  //console.log(data)
-  return (
-    <>
-      <div>
-        <h1>Busca</h1>
-        <input
-          type="text"
-          value={busca}
-          onChange={(ev) => setBusca(ev.target.value)}
-        />
-      </div>
-      <div>
-        {dados.map((arg) => (
-          <div key={arg.ID}>
-            <h2>
-              {arg.ID}-{arg.nome}-{arg.rowNumber}
-            </h2>
-            <Link key={arg.ID} href='/profile/[id]' as={`/profile/${arg.ID}`}>
-              <a>{arg.nome}</a>
-            </Link>
-
-          </div>
-        ))}
-      </div>
-    </>
-  );
-}
-
-//export const getSeverSideProps = async () => {
-  export const getStaticProps = async () => {
-  const dados = await fetcher(`https://back-end-warehouseapp.herokuapp.com/teste/?page=1&per_page=10`);
-  //const {dados} = await res.json();
-
-  return {
-    props: {
-      dados
-    },
-    revalidate: 20,
-  };
-};
-
-=======
-  const [busca, setBusca] = useState("");
   const [per_page, setPer_page] = useState(100);
   const [page, setPage] = useState(1);
-
   const lowerBusca = busca.toLowerCase();
-  const {
-    data,
-    error
-  } = useSWR(
+
+  const { data, error } = useSWR(
     `https://back-end-warehouseapp.herokuapp.com/teste/?per_page=${per_page}&page=${page}&search=${lowerBusca}`,
     fetcher,
-    { initialData: props.dados }
+    {
+      initialData: props.dados,
+      revalidateOnMount: true,
+      revalidateOnFocus: true,
+      shouldRetryOnError: true,
+      focusThrottleInterval: 5000,
+      loadingTimeout: 3000
+    }
   );
+
   if (!data) return <h1>I am loading...</h1>;
   if (error) return <h1>there is an error</h1>;
-  const dados = data;
-  const total = data.length;
-
-  const totalPages = Math.ceil(total / per_page);
-
+  const dados = [...data];
+  const totalp = data.length;
+  const totalPages = Math.ceil(totalp / per_page);
   const arrayPages = [];
   for (let i = 1; i <= totalPages; i++) {
     arrayPages.push(i);
   }
+  const nPages = arrayPages.length;
+  console.log(arrayPages);
+  console.log(totalp);
+  console.log(data);
+  console.log(totalPages);
+  console.log(busca);
 
-  const nPages = [...arrayPages].length;
-  console.log(nPages);
   return (
     <>
       <div>
         <div>
           <h1>Busca</h1>
-          <input
-            type="text"
+          <SearchInput
+            
             value={busca}
-            onChange={(ev) => setBusca(ev.target.value)}
+            onChange={(search) => setBusca(search)}
           />
         </div>
         <div>
@@ -119,12 +68,17 @@ export default function Home(props) {
             <option value="10">10</option>
             <option value="15">15</option>
             <option value="100">100</option>
+            <option value="810">810</option>
           </select>
         </div>
-        {total}
+        {totalp}
         <div>
           {arrayPages.map((n_page) => (
-            <button value={page} onChange={(ev) => setPage(ev.target.value)}>
+            <button
+              key={n_page}
+              value={page}
+              onClick={(ev) => setPage(ev.target.value)}
+            >
               {n_page}
             </button>
           ))}
@@ -132,23 +86,34 @@ export default function Home(props) {
           <input
             min="1"
             max={nPages}
-            type="text"
+            type="search"
             value={page}
             onChange={(ev) => setPage(ev.target.value)}
           />
         </div>
       </div>
       <div>
-        {dados.map((arg) => (
-          <div key={arg.ID}>
-            <h2>
-              {arg.ID}-{arg.nome}-{arg.rowNumber - 1}
-            </h2>
-            <Link key={arg.ID} href="/profile/[id]" as={`/profile/${arg.ID}`}>
-              <a>{arg.nome}</a>
-            </Link>
-          </div>
-        ))}
+        {dados &&
+          dados.map(
+            (arg) => (
+              <div key={arg.ID}>
+                <h2>
+                  {arg.ID}-{arg.nome}-{arg.rowNumber - 1}
+                </h2>
+                <img src={arg.imagem} width="50" />
+                <Link
+                  key={arg.ID}
+                  href="/profile/[id]"
+                  as={`/profile/${arg.ID}`}
+                >
+                  <a>{arg.slug}</a>
+                </Link>
+              </div>
+            ),
+            mutate(
+              `https://back-end-warehouseapp.herokuapp.com/teste/?per_page=${per_page}&page=${page}&search=${lowerBusca}`
+            )
+          )}
       </div>
     </>
   );
@@ -157,7 +122,7 @@ export default function Home(props) {
 //export const getSeverSideProps = async () => {
 export const getStaticProps = async () => {
   const dados = await fetcher(
-    `https://back-end-warehouseapp.herokuapp.com/teste`
+    `https://back-end-warehouseapp.herokuapp.com/teste/?per_page=100&page=1&search=`
   );
   //const {dados} = await res.json();
 
@@ -165,23 +130,17 @@ export const getStaticProps = async () => {
     props: {
       dados
     },
-    revalidate: 20
+    revalidate: 1
   };
 };
 
->>>>>>> 9819151fa9bcecd4bd92bfb8fe78fba6b7dca00f
-/*export const getStaticProps = async () => {
-  const response = await axios.get(`https://back-end-warehouseapp.herokuapp.com`);
+/* export const getStaticProps = async () => {
+  const response = await axios.get(`https://back-end-warehouseapp.herokuapp.com/teste/?per_page=100&page=1&search=`);
   //const {dados} = await res.json();
-
   return {
     props: {
       dados: response.data,
     },
     revalidate: 20,
   };
-<<<<<<< HEAD
-};*/
-=======
-};*/
->>>>>>> 9819151fa9bcecd4bd92bfb8fe78fba6b7dca00f
+}; */

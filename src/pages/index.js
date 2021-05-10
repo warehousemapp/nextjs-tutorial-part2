@@ -122,7 +122,7 @@ export default function Home(props) {
 //export const getSeverSideProps = async () => {
 export const getStaticProps = async () => {
   const dados = await fetcher(
-    `https://back-end-warehouseapp.herokuapp.com/teste/?per_page=100&page=1&search=`
+    `https://back-end-warehouseapp.herokuapp.com/teste`
   );
   //const {dados} = await res.json();
 

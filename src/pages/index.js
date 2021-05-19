@@ -11,16 +11,19 @@ async function fetcher(url) {
   return res.json();
 }
 
-export default function Home() {
+export default function Home(props) {
+
   const [busca, setBusca] = useState('');
   const [per_page, setPer_page] = useState(100);
   const [page, setPage] = useState(1);
   const lowerBusca = busca.toLowerCase();
 
   const { data, error } = useSWR(
-    `https://back-end-warehouseapp.herokuapp.com/teste/?per_page=${per_page}&page=${page}&search=${lowerBusca}`,
+    `https://back-end-warehouseapp.herokuapp.com/app/?per_page=${per_page}&page=${page}&search=${lowerBusca}`,
     fetcher,
     {
+      initialData: props.dados,
+      refreshInterval:500
 /*       revalidateOnMount: true,
       revalidateOnFocus: true,
       shouldRetryOnError: true,
@@ -32,6 +35,7 @@ export default function Home() {
   if (!data) return <h1>I am loading...</h1>;
   if (error) return <h1>there is an error</h1>;
   const dados = data;
+  
   const totalp = data.length;
   const totalPages = Math.ceil(totalp / per_page);
   const arrayPages = [];
@@ -39,11 +43,11 @@ export default function Home() {
     arrayPages.push(i);
   }
   const nPages = arrayPages.length;
-  console.log(arrayPages);
+  //console.log(arrayPages);
   console.log(totalp);
-  console.log(data);
-  console.log(totalPages);
-  console.log(busca);
+  //console.log(data);
+  //console.log(totalPages);
+  //console.log(busca);
 
   return (
     <>
@@ -115,10 +119,10 @@ export default function Home() {
   );
 }
 
-/* export const getSeverSideProps = async () => {
-//export const getStaticProps = async () => {
+//export const getSeverSideProps = async () => {
+export const getStaticProps = async () => {
   const dados = await fetcher(
-    `https://back-end-warehouseapp.herokuapp.com/teste`
+    `https://back-end-warehouseapp.herokuapp.com/app`
   );
   //const {dados} = await res.json();
 
@@ -126,10 +130,10 @@ export default function Home() {
     props: {
       dados
     },
-    revalidate: 1
+    //revalidate: 1
   };
 };
- */
+
 /* export const getStaticProps = async () => {
   const response = await axios.get(`https://back-end-warehouseapp.herokuapp.com/teste/?per_page=100&page=1&search=`);
   //const {dados} = await res.json();
